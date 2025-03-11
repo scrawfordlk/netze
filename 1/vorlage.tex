@@ -6,6 +6,7 @@
 ]{scrartcl}
 \author{Crawford, Sam}
 \title{Netze und verteilte Systeme PS}
+\setcounter{secnumdepth}{0} % removes enumeration of sections etc.
 
 \usepackage[utf8]{inputenc}
 \usepackage[naustrian]{babel}
@@ -40,15 +41,21 @@ Es sollen also 2 Messungen mit mindestens je 10 Diagrammen erstellt werden, die 
 Download bei gleichbleibender Empfangsgüte, die zweite bei schlechter werdendem Empfang (zB
 größeren Abstand zum AP oder …).}
 
+\section{Messaufbau}
 \vspace{3cm}%vspace
 
 \begin{lstlisting}
 $ ssh scrawford@141.201.2.44
 $ fallocate --length 10M file
-$ mv file	public_html
+$ mv file public_html/
 $ chmod a+r public_html/file
 $ exit
 \end{lstlisting}
+
+\vspace{1cm}%vspace
+
+\section{Messungen}
+
 
 \vspace{2cm}%vspace
 \begin{lstlisting}
@@ -57,7 +64,7 @@ $ tcpdump --list-interfaces
 \vspace{2cm}%vspace
 
 \begin{lstlisting}
-$ sudo tcpdump --interface wlo1 -w dump.pcap
+$ sudo tcpdump --interface wlo1 -w dump.pcap &
 \end{lstlisting}
 \vspace{2cm}%vspace
 \begin{lstlisting}
@@ -66,7 +73,7 @@ $ wget --delete-after \
 \end{lstlisting}
 \vspace{2cm}%vspace
 \begin{lstlisting}
-$ sudo killall tcpdump 
+$ sudo killall tcpdump
 \end{lstlisting}
 
 \vspace{2cm}%vspace
@@ -108,6 +115,39 @@ $ wireshark dump.pcap
 	\end{subfigure}
 	\caption{10 Messungen bei konstanter Distanz}
 \end{figure}
+\begin{figure}
+	\begin{subfigure}{0.5\textwidth}
+		\includegraphics[width=1\textwidth]{../1/wireshark/variable1.pdf}
+	\end{subfigure}
+	\begin{subfigure}{0.5\textwidth}
+		\includegraphics[width=1\textwidth]{../1/wireshark/variable2.pdf}
+	\end{subfigure}
+	\begin{subfigure}{0.5\textwidth}
+		\includegraphics[width=1\textwidth]{../1/wireshark/variable3.pdf}
+	\end{subfigure}
+	\begin{subfigure}{0.5\textwidth}
+		\includegraphics[width=1\textwidth]{../1/wireshark/variable4.pdf}
+	\end{subfigure}
+	\begin{subfigure}{0.5\textwidth}
+		\includegraphics[width=1\textwidth]{../1/wireshark/variable5.pdf}
+	\end{subfigure}
+	\begin{subfigure}{0.5\textwidth}
+		\includegraphics[width=1\textwidth]{../1/wireshark/variable6.pdf}
+	\end{subfigure}
+	\begin{subfigure}{0.5\textwidth}
+		\includegraphics[width=1\textwidth]{../1/wireshark/variable7.pdf}
+	\end{subfigure}
+	\begin{subfigure}{0.5\textwidth}
+		\includegraphics[width=1\textwidth]{../1/wireshark/variable8.pdf}
+	\end{subfigure}
+	\begin{subfigure}{0.5\textwidth}
+		\includegraphics[width=1\textwidth]{../1/wireshark/variable9.pdf}
+	\end{subfigure}
+	\begin{subfigure}{0.5\textwidth}
+		\includegraphics[width=1\textwidth]{../1/wireshark/variable10.pdf}
+	\end{subfigure}
+	\caption{10 Messungen bei größer werdender Distanz}
+\end{figure}
 
 \section{Warum darf frau/man dabei nur den eigenen Download messen? Halten Sie sich daran!}
 \vspace{5cm}%vspace
@@ -115,10 +155,38 @@ $ wireshark dump.pcap
 \section{Bonus 1}
 \subsection{Aufgabenstellung}
 \textit{Wie lässt sich die Empfangsgüte verschlechtern, ohne sich vom AP zu entfernen?}
+\vspace{5cm}%vspace
 
 \section{Bonus 2}
 \subsection{Aufgabenstellung}
 \textit{Wie kann die Aufgabe mit Linux-“Bordmitteln“ auf der commandline gelöst werden?}
+\vspace{5cm}%vspace
+
+\begin{lstlisting}
+$ tshark -r dump.pcap -Y "tcp.len > 0" \
+         -T fields -e frame.time_relative \
+         -e tcp.seq >dump.txt
+\end{lstlisting}
+\vspace{5cm}%vspace
+
+\begin{lstlisting}[language=gnuplot, numbers=left, numberstyle=\tiny, showspaces=false, showstringspaces=false]
+set terminal pdf
+set output "diagram.pdf"
+
+set xlabel "Zeit (in Sekunden)"
+set ylabel "TCP Sequenznummer"
+set grid
+
+plot "dump.txt" using 1:2 linestyle 1 title "TCP Diagramm"
+\end{lstlisting}
+\vspace{3cm}%vspace
+
+\begin{lstlisting}
+$ gnuplot plot.gnu
+\end{lstlisting}
 
 \section{Zeitaufwand}
+Schätzungsweise um die 6-8 Stunden, hätte vielleicht weniger Zeit mit Skript schreiben verbringen sollen, die
+ich dann sowieso nicht verwende.
+
 \end{document}

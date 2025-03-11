@@ -1,5 +1,5 @@
 set terminal pdf
-set output 'diagram.pdf'
+set output "diagram.pdf"
 
 set xlabel "Zeit (in Sekunden)"
 set ylabel "TCP Sequenznummer"
